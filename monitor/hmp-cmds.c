@@ -29,8 +29,21 @@
 #include "qemu/cutils.h"
 #include "qemu/log.h"
 #include "sysemu/sysemu.h"
-#include <stdio.h>
-#include <errno.h>
+#include <sys/ioctl.h>
+
+#include <sys/ioctl.h>  // для _IO
+
+#ifndef KVM_IOC_FORCE_EXIT
+
+#ifndef KVMIO
+
+#define KVMIO 0xAE    // стандартное значение KVMIO
+
+#endif
+
+#define KVM_IOC_FORCE_EXIT _IO(KVMIO, 0xF0)  // номер твоего ioctl
+
+#endif
 
 bool hmp_handle_error(Monitor *mon, Error *err)
 {
@@ -439,5 +452,17 @@ void hmp_dumpdtb(Monitor *mon, const QDict *qdict)
 
 void hmp_trigger_vmexit(Monitor *mon, const QDict *qdict)
 {
-    monitor_printf(mon, "Hello\n");
+    CPUState *cpu = first_cpu;  // Только первый vCPU
+
+    if (!cpu || cpu->kvm_fd < 0) {
+        monitor_printf(mon, "CPU 0 not available\n");
+        return;
+    }
+
+    int ret = ioctl(cpu->kvm_fd, KVM_IOC_FORCE_EXIT);  // KVM_IOC_FORCE_EXIT
+    if (ret < 0) {
+        monitor_printf(mon, "ioctl failed: %s\n", strerror(errno));
+    } else {
+        monitor_printf(mon, "VM-Exit triggered for CPU 0\n");
+    }
 }
