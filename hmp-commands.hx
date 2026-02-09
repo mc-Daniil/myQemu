@@ -90,16 +90,16 @@ SRST
 ERST
 
     {
-        .name       = "trigger-vmexit",
+        .name       = "start-coverage",
         .args_type  = "",
         .params     = "",
-        .help       = "Trigger immediate VM exit via KVM_REQ_IMMEDIATE_EXIT",
-        .cmd        = hmp_trigger_vmexit,
+        .help       = "Start collecting syscalls coverage",
+        .cmd        = hmp_start_coverage,
     },
 
 SRST
-``trigger-vmexit``
-  Trigger immediate VM exit.
+``start-coverage``
+  Start collecting syscalls coverage.
 ERST
 
     {

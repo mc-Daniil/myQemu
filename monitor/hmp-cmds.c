@@ -450,7 +450,7 @@ void hmp_dumpdtb(Monitor *mon, const QDict *qdict)
 }
 #endif
 
-void hmp_trigger_vmexit(Monitor *mon, const QDict *qdict)
+void hmp_start_coverage(Monitor *mon, const QDict *qdict)
 {
     CPUState *cpu = first_cpu;  // Только первый vCPU
 
@@ -459,7 +459,7 @@ void hmp_trigger_vmexit(Monitor *mon, const QDict *qdict)
         return;
     }
 
-    int ret = ioctl(cpu->kvm_fd, KVM_IOC_FORCE_EXIT);  // KVM_IOC_FORCE_EXIT
+    int ret = ioctl(cpu->kvm_fd, KVM_IOC_FORCE_EXIT);
     if (ret < 0) {
         monitor_printf(mon, "ioctl failed: %s\n", strerror(errno));
     } else {
